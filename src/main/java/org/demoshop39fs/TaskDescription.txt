@@ -1,0 +1,80 @@
+Написать приложение для учета пользователей.
+
+Функциональность:
+- хранение данных о пользователе:
+    - id
+    - firstName
+    - lastName
+    - email
+    - password
+    - role (user, admin, manager, ...)
+    - state (not_confirmed, confirmed, banned, delete, ...)
+    - confirmationCode (код подтверждения при регистрации)
+    - photoLink
+
+- добавление пользователей
+
+- поиск (byId, byEmail, byLastName, byFirstNameAndLastName, byConfirmationCode, ...)
+
+- update (password, firstName, lastName, role, state, photoLink)
+
+=============================================================
+
+Действия, которые может сделать сам пользователь:
+
+- добавление пользователя
+- update (password, firstName, lastName, photoLink)
+
+
+
+Действия, которые может сделать admin:
+
+- добавление пользователей
+- поиск (byId, byEmail, byLastName, byFirstNameAndLastName, byConfirmationCode, ...)
+- update (password, firstName, lastName, role, state, photoLink)
+
+
+
+API description:
+
+PublicController (контроллер для обращения всех пользователей)
+
+- добавление пользователей
+post
+ResponseEntity<CreateUserResponse> registerUser(CreateUserRequest request)
+ResponseEntity<UserDto> registerUser(NewUserDto request)
+
+
+AuthController (контроллер для авторизации)
+
+post
+ResponseEntity<LoginConfirmation> loginUser(LoginUserRequest request)
+
+
+
+UserController (контроллер для запросов пользователя)
+
+put
+ResponseEntity<UpdateUserResponse> updateUser(UpdateUserRequest request)
+
+
+AdminController (контроллер для запросов admin)
+
+- поиск (byId, byEmail, byLastName, byFirstNameAndLastName, byConfirmationCode, ...)
+
+
+put
+ResponseEntity<UpdateUserResponseForAdmin> updateUser(UpdateUserRequestFromAdmin request)
+
+
+ResponseEntity<UserResponse> findById(Integer id)
+
+ResponseEntity<UserResponse> findByEmail(String email)
+
+ResponseEntity<UserResponse> findByLastName(String lastName)
+
+ResponseEntity<UserResponse> findByFirstNameAndLastName(String lastName, String firstName)
+
+ResponseEntity<UserResponse> findByConfirmationCode(Integer confirmationCode)
+
+

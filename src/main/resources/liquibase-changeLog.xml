@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <!-- добавляем наши изменения -->
+
+    <changeSet id="create.table.role" author="author1">
+        <createTable tableName="role">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR (255)" />
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create.table.manager" author="author1">
+        <createTable tableName="manager">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="manager_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="manager" baseColumnNames="role_id" constraintName="fk_manager_role_id" referencedTableName="role"
+                                 referencedColumnNames="id" />
+    </changeSet>
+
+    <!-- внесем первоначальные данные в таблицы -->
+
+    <changeSet id="insert.default.data.roles" author="admin">
+        <insert tableName="role">
+            <column name="name" value="ADMIN" ></column>
+        </insert>
+        <insert tableName="role">
+            <column name="name" value="USER" ></column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert.default.data.manager" author="admin">
+        <insert tableName="manager">
+            <column name="manager_name" value="Administrator" ></column>
+            <column name="password" value="pass12345"/>
+            <column name="email" value="admin@company.com"/>
+            <column name="role_id" value="1"/>
+        </insert>
+
+    </changeSet>
+
+
+</databaseChangeLog>
