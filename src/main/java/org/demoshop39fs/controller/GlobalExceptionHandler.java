@@ -48,8 +48,5 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(responseMessage.toString(), HttpStatus.BAD_REQUEST, "ConstraintViolationException");
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseDto> handleGeneralException(Exception e) {
-        return buildErrorResponse("Произошла ошибка: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, "GeneralException");
-    }
+
 }

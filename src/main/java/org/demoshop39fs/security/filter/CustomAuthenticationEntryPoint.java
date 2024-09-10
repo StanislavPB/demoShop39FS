@@ -20,10 +20,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        log.error("Unauthorized error: " + authException.getMessage());
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        String message = "Unauthorized: " + authException.getMessage();
+
+        response.setStatus(status.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(objectMapper.writeValueAsString("Unauthorized: " + authException.getMessage()));
-    }
+        response.getWriter().write(objectMapper.writeValueAsString(message));  }
 
 }
