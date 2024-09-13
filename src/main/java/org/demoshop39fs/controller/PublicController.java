@@ -2,6 +2,7 @@ package org.demoshop39fs.controller;
 
 import org.demoshop39fs.controller.api.PublicApi;
 import org.demoshop39fs.dto.CreateRequestUser;
+import org.demoshop39fs.dto.StandardResponseDto;
 import org.demoshop39fs.dto.UserResponse;
 import org.demoshop39fs.service.ConfirmationCodeService;
 import org.demoshop39fs.service.UserService;
@@ -25,7 +26,7 @@ public class PublicController implements PublicApi {
     }
 
     @Override
-    public ResponseEntity<UserResponse> confirmUser(String confirmationCode) {
-        return ResponseEntity.ok(confirmationCodeService.confirmUser(confirmationCode));
+    public ResponseEntity<StandardResponseDto> confirmUser(String confirmationCode) {
+        return ResponseEntity.ok(userService.confirmUser(confirmationCode));
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.demoshop39fs.dto.CreateRequestUser;
+import org.demoshop39fs.dto.StandardResponseDto;
 import org.demoshop39fs.dto.UserResponse;
 import org.demoshop39fs.dto.ErrorResponseDto;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,5 @@ public interface PublicApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     @PostMapping("/confirm")
-    ResponseEntity<UserResponse> confirmUser(@RequestParam String confirmationCode);
+    ResponseEntity<StandardResponseDto> confirmUser(@RequestParam String confirmationCode);
 }

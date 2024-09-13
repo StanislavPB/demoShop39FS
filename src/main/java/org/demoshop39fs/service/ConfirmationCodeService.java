@@ -1,5 +1,6 @@
 package org.demoshop39fs.service;
 
+import lombok.RequiredArgsConstructor;
 import org.demoshop39fs.dto.UserResponse;
 import org.demoshop39fs.entity.ConfirmationCode;
 import org.demoshop39fs.entity.User;
@@ -9,27 +10,36 @@ import org.demoshop39fs.repository.ConfirmationCodeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class ConfirmationCodeService {
 
     private final ConfirmationCodeRepository confirmationCodeRepository;
-    private final UserService userService;
-    private final UserMapper userMapper;
 
-    public ConfirmationCodeService(ConfirmationCodeRepository confirmationCodeRepository, UserService userService, UserMapper userMapper) {
-        this.confirmationCodeRepository = confirmationCodeRepository;
-        this.userService = userService;
-        this.userMapper = userMapper;
+
+    public String createConfirmationCode(User user) {
+        String newConfirmationCode = UUID.randomUUID().toString();
+
+        ConfirmationCode code = ConfirmationCode.builder()
+                .code(newConfirmationCode)
+                .user(user)
+                .expiredDateTime(LocalDateTime.now().plusDays(1))
+                .build();
+
+        confirmationCodeRepository.save(code);
+
+        return newConfirmationCode;
     }
 
-    public UserResponse confirmUser(String confirmationCode) {
-        ConfirmationCode code = confirmationCodeRepository.findByCodeAndExpiredDateTimeAfter(confirmationCode, LocalDateTime.now())
+    public ConfirmationCode findByCode(String code){
+        return confirmationCodeRepository.findByCode(code)
                 .orElseThrow(() -> new NotFoundException("Confirmation code not found or expired"));
+    }
 
-        User user = code.getUser();
-        user.setState(User.State.CONFIRMED);
-        userService.updatePhotoLink(user.getId(), user.getPhotoLink());  // Если нужно обновить photoLink
-        return userMapper.toResponse(user);
+    public ConfirmationCode findByCodeExpireDateTimeAfter(String code, LocalDateTime date){
+        return confirmationCodeRepository.findByCodeAndExpiredDateTimeAfter(code,date)
+                .orElseThrow(() -> new NotFoundException("Confirmation code not found or expired"));
     }
 }

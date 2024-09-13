@@ -1,32 +1,58 @@
 package org.demoshop39fs.service;
 
+import lombok.RequiredArgsConstructor;
 import org.demoshop39fs.dto.*;
+import org.demoshop39fs.entity.ConfirmationCode;
 import org.demoshop39fs.entity.User;
 import org.demoshop39fs.exceptions.NotFoundException;
 import org.demoshop39fs.mapper.UserMapper;
 import org.demoshop39fs.repository.UserRepository;
+import org.demoshop39fs.service.mail.UserMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserMailSender userMailSender;
+    private final ConfirmationCodeService confirmationCodeService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
+
+    @Transactional
 
     public UserResponse registerUser(CreateRequestUser request) {
         User user = userMapper.toEntity(request);
         user.setRole(User.Role.USER);
         user.setState(User.State.NOT_CONFIRMED);
         userRepository.save(user);
+
+        String confirmationCode = confirmationCodeService.createConfirmationCode(user);
+
+        userMailSender.sendEmail(user,confirmationCode);
+
         return userMapper.toResponse(user);
+    }
+
+
+    @Transactional
+    public StandardResponseDto confirmUser(String confirmationCode){
+        ConfirmationCode code = confirmationCodeService.findByCodeExpireDateTimeAfter(confirmationCode, LocalDateTime.now());
+
+        User user = code.getUser();
+
+        user.setState(User.State.CONFIRMED);
+
+        userRepository.save(user);
+
+        return new StandardResponseDto("Регистрация успешно завершена");
+
     }
 
     public UserResponse updateUser(UpdateUserRequest request) {

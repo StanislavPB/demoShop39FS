@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ConfirmationCodeRepository extends JpaRepository<ConfirmationCode, Integer> {
 
     Optional<ConfirmationCode> findByCodeAndExpiredDateTimeAfter(String code, LocalDateTime now);
+    Optional<ConfirmationCode> findByCode(String code);
 }

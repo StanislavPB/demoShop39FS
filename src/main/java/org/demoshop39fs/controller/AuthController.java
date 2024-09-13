@@ -1,38 +1,36 @@
 package org.demoshop39fs.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.demoshop39fs.controller.api.AuthApi;
 import org.demoshop39fs.security.dto.AuthRequest;
 import org.demoshop39fs.security.dto.AuthResponse;
-import org.demoshop39fs.security.service.JwtTokenProvider;
+import org.demoshop39fs.security.service.AuthService;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController implements AuthApi {
 
-    private final JwtTokenProvider tokenProvider;
-    private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
     @Override
     public ResponseEntity<AuthResponse> authenticate(AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUserName(),
-                        request.getPassword()
-                )
-        );
+        log.info("Attempting to authenticate user: " + request.getUserName());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return ResponseEntity.ok(authService.authenticate(request));
+    }
 
-        String jwt = tokenProvider.createToken(authentication.getName());
+    @Override
+    public ResponseEntity<AuthResponse> authenticateBasic(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Basic ")){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
 
-        return new ResponseEntity<>(new AuthResponse(jwt), HttpStatus.OK);
+        return ResponseEntity.ok(authService.authenticateBasic(authorizationHeader));
     }
 }
