@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import jakarta.validation.ConstraintViolationException;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -34,8 +37,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RestException.class)
-    public ResponseEntity<ErrorResponseDto> handleRestException(RestException e) {
-        return buildErrorResponse(e.getMessage(), HttpStatus.CONFLICT, "RestException");
+    public ResponseEntity<Map<String,String>> handleRestException(RestException e) {
+        Map<String,String> response = new HashMap<>();
+        response.put("message", e.getMessage());
+        response.put("error", "Exception Type: " + e.getClass().getSimpleName());
+
+        return new ResponseEntity<>(response,HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

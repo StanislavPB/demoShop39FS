@@ -6,6 +6,7 @@ import org.demoshop39fs.dto.StandardResponseDto;
 import org.demoshop39fs.dto.UserResponse;
 import org.demoshop39fs.service.ConfirmationCodeService;
 import org.demoshop39fs.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class PublicController implements PublicApi {
 
     @Override
     public ResponseEntity<UserResponse> registerUser(CreateRequestUser request) {
-        return ResponseEntity.ok(userService.registerUser(request));
+        return new ResponseEntity<>(userService.registerUser(request), HttpStatus.CREATED);
     }
 
     @Override

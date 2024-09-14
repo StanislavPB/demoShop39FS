@@ -5,9 +5,12 @@ import org.demoshop39fs.dto.*;
 import org.demoshop39fs.entity.ConfirmationCode;
 import org.demoshop39fs.entity.User;
 import org.demoshop39fs.exceptions.NotFoundException;
+import org.demoshop39fs.exceptions.RestException;
 import org.demoshop39fs.mapper.UserMapper;
 import org.demoshop39fs.repository.UserRepository;
 import org.demoshop39fs.service.mail.UserMailSender;
+import org.springframework.context.annotation.Profile;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//@Profile("dev")
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -28,6 +32,11 @@ public class UserService {
     @Transactional
 
     public UserResponse registerUser(CreateRequestUser request) {
+
+        if (userRepository.existsByEmail(request.getEmail())){
+            throw new RestException(HttpStatus.CONFLICT, "Пользователь с email " + request.getEmail() + " уже существует");
+        }
+
         User user = userMapper.toEntity(request);
         user.setRole(User.Role.USER);
         user.setState(User.State.NOT_CONFIRMED);
