@@ -1,8 +1,9 @@
 spring.application.name=demoShop39FS
 
 
-spring.datasource.url=${JDBC_DATABSE_URL}
-
+spring.datasource.url=jdbc:mysql://localhost:3306/demoShop39fs
+spring.datasource.username=root
+spring.datasource.password=root2023
 
 #hibernate
 spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
