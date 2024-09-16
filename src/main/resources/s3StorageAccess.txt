@@ -1,0 +1,5 @@
+
+    private String accessKey = "DO00KHB4P7EGB3WYXFTC";
+    private String secretKey = "/zrv3VIzepD+UxE1nlMI+vT9xZHTEbkFmG+Qakk3d18";
+    private String endpoint = "https://fra1.digitaloceanspaces.com";
+    private String region = "fra1";
